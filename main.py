@@ -1,30 +1,40 @@
 import pyautogui
-from PIL import Image, ImageDraw, ImageFilter
 import tkinter as tk
-import pygetwindow as gw
-from pynput import mouse
 
-def on_click(x, y, button, pressed):
-    # TODO クリックしたウィンドウのスクリーンショットを撮る
+def ss_btn_click():
+    """
+    スクリーンショットを撮影し、半透明なウィンドウを生成し、表示する
+    :return:
+    """
+# TODO クリックしたウィンドウのスクリーンショットを撮る？
     ss = pyautogui.screenshot()
     ss_pass = 'screenshot/ss.png'
     ss.save(ss_pass)
     print('スクリーンショットを保存しました。')
 
-    if not pressed:
-        # Stop listener
-        return False
+    window = tk.Tk()
+    window.title('スクリーンショット透明化くん')
 
-def ss_btn_click():
-    # スクリーンショットを撮影するウィンドウのクリック待ち
-    with mouse.Listener(on_click=on_click) as listener:
-        listener.join()
+    # ウィンドウサイズの指定
+    window.geometry("500x500")
+    window.resizable(True, True)
 
+    # ウィンドウの透明度
+    window.attributes('-alpha', 0.7)
 
-    # TODO ショートカットキーの設定
+    # ウィンドウを前面で固定する
+    # window.attributes('-topmost', True)
+
+    img = tk.PhotoImage(file=ss_pass, master=window)
+    label_img = tk.Label(window, image=img)
+    label_img.pack()
+    window.mainloop()
+
+    # TODO 設定メニューの作成
+    # TODO ショートカットキー
     # TODO 範囲指定をするか
-    # TODO ウィンドウサイズの設定
-    # TODO 透明度の設定
+    # TODO ウィンドウサイズ
+    # TODO 透明度
     # TODO ウィンドウを閉じるときファイルを削除するか
 
 
@@ -32,12 +42,14 @@ if __name__ == '__main__':
     # マウスカーソルが画面の隅に移動するとスクリプト強制終了（安全機構）
     pyautogui.FAILSAFE = True  # デフォルトで有効
 
-    # ウィンドウ生成
+    # メインウィンドウ生成
     # TODO 最前面チェックあり
     root = tk.Tk()
-    root.geometry("150x100")
+    root.geometry("300x50")
     root.resizable(True, True)
     root.title('スクリーンショット透明化くん')
+    # ウィンドウを前面で固定する
+    root.attributes('-topmost', True)
 
     # 撮影ボタン
     btn_ss = tk.Button(root, width=10, height=5, text='開　始', command=ss_btn_click)
